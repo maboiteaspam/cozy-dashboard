@@ -1,0 +1,7 @@
+
+<h2>Your applications</h2>
+
+<p class="app-line" ng-repeat="app in applications">
+    <a href="{{app.url}}" target="_blank">{{app.displayName}}</a>
+    <span>&nbsp;({{app.version }})</span>
+</p>

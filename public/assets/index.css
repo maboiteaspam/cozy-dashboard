@@ -1,0 +1,93 @@
+
+@font-face {
+    font-family: mavenpro;
+    src: url(maven-pro-light-200.otf);
+}
+
+@font-face {
+    font-family: signika;
+    src: url(source-sans-pro.ttf);
+}
+
+body {
+    font-family: mavenpro;
+    padding: 20px;
+}
+
+h1 {
+    margin-top: 0;
+    font-weight: normal;
+    font-size: 36px;
+}
+h2 {
+    font-weight: normal;
+    margin-top: 60px;
+}
+
+.logo {
+    float: left;
+    margin-right: 20px;
+}
+
+.app-line {
+    text-transform: uppercase;
+    font-size: 16px;
+}
+
+a {
+    font-weight: bold;
+    Text-decoration: none;
+    color: black;
+}
+a:hover {
+    color: orange;
+}
+a:visited {
+    color: black;
+}
+.app-line span {
+    font-family: signika
+text-transform: normal;
+    font-size: 14px;
+}
+
+
+
+.status{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    transition-property: all;
+    transition-duration: 500ms;
+    top:0;
+    left: 0;
+    overflow: hidden;
+}
+.status .bg{
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+    background-color: #747474;
+}
+.status.connecting{
+    width: 100%;
+    height: 100%;
+}
+.status.connecting .bg{
+    background-color: #335974;
+}
+.status.connected{
+    top:50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    z-index: -1;
+}
+.status.stopped{
+    width: 100%;
+    height: 100%;
+}
+.status.stopped .bg{
+    background-color: #743939;
+}
