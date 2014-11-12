@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs-extra');
+var pathExtra = require('path-extra');
 var cozyLight = require('cozy-light');
 var express = require('express');
 var http = require('http');
@@ -14,24 +16,6 @@ var actions = cozyLight.actions;
 var configHelpers = cozyLight.configHelpers;
 var npmHelpers = cozyLight.npmHelpers;
 var nodeHelpers = cozyLight.nodeHelpers;
-
-var apps = [{
-  displayName:'test',
-  url:'http://localhost:19104/apps/test/',
-  version:'0.0.'
-},{
-  displayName:'test 2',
-  url:'http://localhost:19104/apps/test/',
-  version:'0.0.'
-}];
-
-var plugins = [{
-  displayName:'test 3',
-  version:'0.0.'
-},{
-  displayName:'test 4',
-  version:'0.0.'
-}];
 
 
 var controllers = {
@@ -122,66 +106,6 @@ var controllers = {
 
 
 
-
-var restServer = function(options, done) {
-  rest_app = express();
-  options.port = options.getPort();
-
-  rest_app.all('/rest/list-apps', function(){
-    res.send(apps);
-  });
-  rest_app.all('/rest/list-plugins', function(){
-    res.send(plugins);
-  });
-  rest_app.listen(options.port,options.host);
-  console.log("Rest started http://localhost:"+options.port+"/");
-  done('http://'+options.host+':'+options.port);
-};
-
-var socketServer = function(options, done) {
-  options.name = 'DashboardServer';
-  options.host = process.env.HOST || "0.0.0.0";
-  options.port = options.getPort();
-  console.log("Socket started http://localhost:"+options.port+"/");
-  wss = new WebSocketServer({
-    host: options.host,
-    port: options.port
-  });
-  wss.on('connection', function(ws) {
-    var emit = function(m,d){
-      var event = {
-        message:m,
-        data:d
-      };
-      ws.send( JSON.stringify(event) );
-    };
-    var sendApplicationList = function(){
-      emit('applicationList', apps);
-    };
-    var sendPluginList = function(){
-      emit('pluginList', plugins);
-    };
-    var sendMemoryValue = function(){
-      var memoryUsage = process.memoryUsage();
-      var memory = {
-        value: Math.ceil(memoryUsage.heapUsed / 1000000),
-        unit: 'MB'
-      };
-      emit('memoryChanged', memory);
-    };
-
-    sendPluginList();
-    sendApplicationList();
-    sendMemoryValue();
-    var interval = setInterval(sendMemoryValue,2500);
-    intervals.push(interval);
-    ws.on('close', function() {
-      clearInterval(interval);
-    });
-  });
-  done('ws://'+options.host+':'+options.port);
-};
-
 var startSocket = function(port) {
   wss = new WebSocketServer({
     host: 'localhost',
@@ -248,24 +172,7 @@ var stop = function(done) {
   done();
 };
 
-var start_test = function(options, done) {
-  restServer(options,function(rest_api){
-    options.rest_api = rest_api;
-    socketServer(options,function(socket_api){
-      options.socket_api = socket_api;
-      start(options, done);
-    });
-  });
-};
 
-var stop_test = function(done) {
-  intervals.forEach(function(interval){
-    clearInterval(interval);
-  });
-  if( wss ) wss.close();
-  if( rest_app ) rest_app.close();
-  done();
-};
 
 module.exports.start = start;
 module.exports.stop = stop;
@@ -276,11 +183,41 @@ if( !module.parent ){
   var opts = {
     getPort:function(){
       return port++;
-    },
-    'rest_api': 'http://localhost:8080/',
-    'socket_api': 'http://localhost:8081/'
+    }
   };
-  start_test(opts,function(){
+
+  var apps = {
+    "cozy-labs/hello":{
+      "name":"cozy-labs/hello",
+      "displayName":"Hello","version":"1.0.0",
+      "url":"http://localhost:19104/apps/hello/"
+    }
+  };
+
+  var plugins = {
+    "fixtures/test-plugin/":{
+      "name":"fixtures/test-plugin/",
+      "displayName":"Test",
+      "version":"1.1.13",
+      "template":""
+    }
+  };
+
+  configHelpers.exportApps = function(){
+    return apps;
+  };
+  configHelpers.exportPlugins = function(){
+    return plugins;
+  };
+
+  var workingDir = pathExtra.join( __dirname, '/.test-working_dir/');
+  var fixturesDir = pathExtra.join( __dirname, '/fixtures/');
+  var HOME = workingDir;
+  var cozyHOME = pathExtra.join(HOME, '.cozy-light' );
+  fs.removeSync(workingDir);
+  fs.mkdirSync(workingDir);
+  configHelpers.init(workingDir);
+  start(opts,function(){
     console.log("Dashboard started http://localhost:"+opts.port+"/");
     console.log("ready")
   });

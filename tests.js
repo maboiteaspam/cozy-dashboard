@@ -26,7 +26,6 @@ before(function(){
   fs.removeSync(workingDir);
   fs.mkdirSync(workingDir);
   configHelpers.init(workingDir);
-  configHelpers.loadConfigFile();
 });
 
 
@@ -82,7 +81,14 @@ describe('Controllers', function () {
   describe('list', function () {
     it('apps', function (done) {
       this.timeout(10000);
-      var expect = {"cozy-labs/hello":{"displayName":"Hello","version":"1.0.0","url":"http://localhost:19104/apps/hello/"}};
+      var expect = {
+        "cozy-labs/hello":{
+          "name":"cozy-labs/hello",
+          "displayName":"Hello",
+          "version":"1.0.0",
+          "url":"http://localhost:19104/apps/hello/"
+        }
+      };
       supertest( app )
         .get('/list-apps')
         .expect(JSON.stringify(expect))
@@ -90,7 +96,14 @@ describe('Controllers', function () {
     });
     it('plugins', function (done) {
       this.timeout(10000);
-      var expect = {"fixtures/test-plugin/":{"displayName":"Test","version":"1.1.13","template":""}};
+      var expect = {
+        "fixtures/test-plugin/":{
+          "name":"fixtures/test-plugin/",
+          "displayName":"Test",
+          "version":"1.1.13",
+          "template":""
+        }
+      };
       supertest( app )
         .get('/list-plugins')
         .expect(JSON.stringify(expect))
