@@ -3,23 +3,15 @@ var fs = require('fs-extra');
 var pathExtra = require('path-extra');
 var express = require('express');
 var bodyParser = require('body-parser');
-var index = require('./index.js');
-var controllers = index.controllers;
 var supertest = require('supertest');
 
-var cozyLight = require('cozy-light');
+var index = require('./index.js');
+var controllers = index.controllers;
 
-var actions = cozyLight.actions;
-//var controllers = cozyLight.controllers;
+var cozyLight = require('cozy-light');
 var configHelpers = cozyLight.configHelpers;
-var npmHelpers = cozyLight.npmHelpers;
-var applicationHelpers = cozyLight.applicationHelpers;
-//var mainAppHelper = cozyLight.mainAppHelper;
 
 var workingDir = pathExtra.join( __dirname, '/.test-working_dir/');
-var fixturesDir = pathExtra.join( __dirname, '/fixtures/');
-var HOME = workingDir;
-var cozyHOME = pathExtra.join(HOME, '.cozy-light' );
 
 
 before(function(){
@@ -30,7 +22,7 @@ before(function(){
 
 
 after(function(){
-  fs.removeSync(workingDir);
+  //fs.removeSync(workingDir);
 });
 
 

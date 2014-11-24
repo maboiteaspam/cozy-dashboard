@@ -56,7 +56,7 @@ var controllers = {
     if (apps[app] === undefined) {
       res.status(404).end();
     } else {
-      npmHelpers.uninstall(app, function removeAppFromConfig (err) {
+      npmHelpers.uninstall(apps[app].name, function removeAppFromConfig (err) {
         if (!err) {
           configHelpers.removeApp(app);
           res.status(200).end();
@@ -89,7 +89,7 @@ var controllers = {
     if (plugins[plugin] === undefined) {
       res.status(404).end();
     } else {
-      npmHelpers.uninstall(plugin, function remotePluginFromConfig (err) {
+      npmHelpers.uninstall(plugins[plugin].name, function remotePluginFromConfig (err) {
         if (!err) {
           configHelpers.removePlugin(plugin);
           res.status(200).end();
@@ -173,6 +173,7 @@ var stop = function(done) {
 
 module.exports.start = start;
 module.exports.stop = stop;
+module.exports.controllers = controllers; // export for testing purpose
 
 if( !module.parent ){
   var port = 8080;
