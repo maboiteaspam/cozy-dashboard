@@ -7,12 +7,9 @@ var express = require('express');
 var http = require('http');
 var ws = require('ws');
 var WebSocketServer = ws.Server;
-var rest_app;
 var wss;
 var server;
-var intervals = [];
 
-var actions = cozyLight.actions;
 var configHelpers = cozyLight.configHelpers;
 var npmHelpers = cozyLight.npmHelpers;
 var nodeHelpers = cozyLight.nodeHelpers;
@@ -176,7 +173,6 @@ var stop = function(done) {
 
 module.exports.start = start;
 module.exports.stop = stop;
-module.exports.controllers = controllers;
 
 if( !module.parent ){
   var port = 8080;
@@ -211,9 +207,6 @@ if( !module.parent ){
   };
 
   var workingDir = pathExtra.join( __dirname, '/.test-working_dir/');
-  var fixturesDir = pathExtra.join( __dirname, '/fixtures/');
-  var HOME = workingDir;
-  var cozyHOME = pathExtra.join(HOME, '.cozy-light' );
   fs.removeSync(workingDir);
   fs.mkdirSync(workingDir);
   configHelpers.init(workingDir);
