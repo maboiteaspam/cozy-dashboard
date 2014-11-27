@@ -144,7 +144,7 @@ var startSocket = function(port) {
 };
 var start = function(options, done) {
   var app = express();
-  options.name = pkg.name;
+  options.name = pkg.displayName;
   options.host = process.env.HOST || "0.0.0.0";
   options.port = options.getPort();
   var socket_port = options.getPort();
@@ -214,7 +214,7 @@ if( !module.parent ){
   fs.mkdirSync(workingDir);
   configHelpers.init(workingDir);
   start(opts,function(){
-    console.log("Dashboard started http://localhost:"+opts.port+"/");
+    console.log(pkg.displayName+" started http://localhost:"+opts.port+"/");
     console.log("ready")
   });
 }
