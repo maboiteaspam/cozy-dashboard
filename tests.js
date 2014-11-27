@@ -22,7 +22,7 @@ before(function(){
 
 
 after(function(){
-  //fs.removeSync(workingDir);
+  fs.removeSync(workingDir);
 });
 
 
@@ -57,7 +57,7 @@ describe('Controllers', function () {
       this.timeout(10000);
       supertest( app )
         .post('/install-app')
-        .send({app:'cozy-labs/hello'})
+        .send({app: 'cozy-labs/hello'})
         .expect(200, done);
     });
     it('should install plugin', function (done) {
@@ -65,7 +65,7 @@ describe('Controllers', function () {
       var test = pathExtra.join('fixtures/', 'test-plugin/');
       supertest( app )
         .post('/install-plugin')
-        .send({plugin:test})
+        .send({plugin: test})
         .expect(200, done);
     });
   });
@@ -74,11 +74,11 @@ describe('Controllers', function () {
     it('apps', function (done) {
       this.timeout(10000);
       var expect = {
-        "cozy-labs/hello":{
-          "name":"cozy-labs/hello",
-          "displayName":"Hello",
-          "version":"1.0.0",
-          "url":"http://localhost:19104/apps/hello/"
+        'cozy-labs/hello': {
+          'name': 'cozy-labs/hello',
+          'displayName': 'Hello',
+          'version': '1.0.0',
+          'url': 'http://localhost:19104/apps/hello/'
         }
       };
       supertest( app )
@@ -89,11 +89,11 @@ describe('Controllers', function () {
     it('plugins', function (done) {
       this.timeout(10000);
       var expect = {
-        "fixtures/test-plugin/":{
-          "name":"fixtures/test-plugin/",
-          "displayName":"Test",
-          "version":"1.1.13",
-          "template":""
+        'fixtures/test-plugin/': {
+          'name': 'fixtures/test-plugin/',
+          'displayName': 'Test',
+          'version': '1.1.13',
+          'template': ''
         }
       };
       supertest( app )
@@ -108,7 +108,7 @@ describe('Controllers', function () {
       this.timeout(10000);
       supertest( app )
         .post('/uninstall-app')
-        .send({app:'cozy-labs/hello'})
+        .send({app: 'cozy-labs/hello'})
         .expect(200, done);
     });
     it('should uninstall plugin', function (done) {
@@ -116,9 +116,8 @@ describe('Controllers', function () {
       var test = pathExtra.join('fixtures/', 'test-plugin/');
       supertest( app )
         .post('/uninstall-plugin')
-        .send({plugin:test})
+        .send({plugin: test})
         .expect(200, done);
     });
   });
 });
-

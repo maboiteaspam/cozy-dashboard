@@ -14,7 +14,7 @@ var configHelpers = cozyLight.configHelpers;
 var npmHelpers = cozyLight.npmHelpers;
 var nodeHelpers = cozyLight.nodeHelpers;
 
-var pkg = require(__dirname+'/package.json');
+var pkg = require( pathExtra.join(__dirname, '/package.json'));
 
 var controllers = {
 
@@ -34,15 +34,15 @@ var controllers = {
    */
   installApp: function (req, res) {
     var app = req.body.app;
-    var apps = configHelpers.exportApps();
-    if (apps[app]) {
+    var appList = configHelpers.exportApps();
+    if (appList[app]) {
       res.status(500).end();
-    }else{
+    } else {
       npmHelpers.fetchInstall(app, function addAppToConfig (err, manifest) {
         if (!err) {
           configHelpers.addApp(app, manifest);
           res.status(200).end();
-        }else{
+        } else {
           res.status(500).end();
         }
       });
@@ -53,18 +53,19 @@ var controllers = {
    */
   uninstallApp: function (req, res) {
     var app = req.body.app;
-    var apps = configHelpers.exportApps();
-    if (apps[app] === undefined) {
+    var appList = configHelpers.exportApps();
+    if (appList[app] === undefined) {
       res.status(404).end();
     } else {
-      npmHelpers.uninstall(apps[app].name, function removeAppFromConfig (err) {
-        if (!err) {
-          configHelpers.removeApp(app);
-          res.status(200).end();
-        }else{
-          res.status(500).end();
-        }
-      });
+      npmHelpers.uninstall(appList[app].name,
+        function removeAppFromConfig (err) {
+          if (!err) {
+            configHelpers.removeApp(app);
+            res.status(200).end();
+          } else {
+            res.status(500).end();
+          }
+        });
     }
   },
 
@@ -76,7 +77,7 @@ var controllers = {
       if (!err) {
         configHelpers.addPlugin(plugin, manifest);
         res.status(200).end();
-      }else{
+      } else {
         res.status(500).end();
       }
     });
@@ -86,18 +87,19 @@ var controllers = {
    */
   uninstallPlugin: function (req, res) {
     var plugin = req.body.plugin;
-    var plugins = configHelpers.exportPlugins();
-    if (plugins[plugin] === undefined) {
+    var pluginList = configHelpers.exportPlugins();
+    if (pluginList[plugin] === undefined) {
       res.status(404).end();
     } else {
-      npmHelpers.uninstall(plugins[plugin].name, function remotePluginFromConfig (err) {
-        if (!err) {
-          configHelpers.removePlugin(plugin);
-          res.status(200).end();
-        }else{
-          res.status(500).end();
-        }
-      });
+      npmHelpers.uninstall(pluginList[plugin].name,
+        function remotePluginFromConfig (err) {
+          if (!err) {
+            configHelpers.removePlugin(plugin);
+            res.status(200).end();
+          } else {
+            res.status(500).end();
+          }
+        });
     }
   }
 };
@@ -145,28 +147,30 @@ var startSocket = function(port) {
 var start = function(options, done) {
   var app = express();
   options.name = pkg.displayName;
-  options.host = process.env.HOST || "0.0.0.0";
+  options.host = process.env.HOST || '0.0.0.0';
   options.port = options.getPort();
-  var socket_port = options.getPort();
+  var socketPort = options.getPort();
   app.get('/rest-api', function(req, res){
-    res.send('http://localhost:'+options.port);
+    res.send('http://localhost:' + options.port);
   });
   app.get('/socket-api', function(req, res){
-    res.send('ws://localhost:'+socket_port);
+    res.send('ws://localhost:' + socketPort);
   });
 
   app.all('/rest/list-apps', controllers.listApps);
   app.all('/rest/list-plugins', controllers.listPlugins);
 
-  app.use(express.static(__dirname + '/public'));
+  app.use(express.static( pathExtra.join(__dirname, '/public') ) );
   server = http.createServer(app);
   server.listen(options.port);
-  startSocket(socket_port);
+  startSocket(socketPort);
   done(null, app, server);
 };
 
 var stop = function(done) {
-  if( wss ) wss.close();
+  if ( wss ){
+    wss.close();
+  }
   done();
 };
 
@@ -176,29 +180,29 @@ module.exports.start = start;
 module.exports.stop = stop;
 module.exports.controllers = controllers; // export for testing purpose
 
-if( !module.parent ){
+if ( !module.parent ){
   var port = 8080;
   var opts = {
-    getPort:function(){
+    getPort: function(){
       return port++;
     }
   };
 
   var apps = {
-    "cozy-labs/hello":{
-      "name":"cozy-labs/hello",
-      "displayName":"Hello",
-      "version":"1.0.0",
-      "url":"http://localhost:19104/apps/hello/"
+    'cozy-labs/hello': {
+      'name': 'cozy-labs/hello',
+      'displayName': 'Hello',
+      'version': '1.0.0',
+      'url': 'http://localhost:19104/apps/hello/'
     }
   };
 
   var plugins = {
-    "fixtures/test-plugin/":{
-      "name":"fixtures/test-plugin/",
-      "displayName":"Test",
-      "version":"1.1.13",
-      "template":""
+    'fixtures/test-plugin/': {
+      'name': 'fixtures/test-plugin/',
+      'displayName': 'Test',
+      'version': '1.1.13',
+      'template': ''
     }
   };
 
@@ -214,7 +218,8 @@ if( !module.parent ){
   fs.mkdirSync(workingDir);
   configHelpers.init(workingDir);
   start(opts,function(){
-    console.log(pkg.displayName+" started http://localhost:"+opts.port+"/");
-    console.log("ready")
+    console.log(pkg.displayName + ' started ' +
+    'http://localhost:' + opts.port + '/');
+    console.log('ready');
   });
 }
