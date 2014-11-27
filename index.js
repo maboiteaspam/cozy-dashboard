@@ -14,6 +14,7 @@ var configHelpers = cozyLight.configHelpers;
 var npmHelpers = cozyLight.npmHelpers;
 var nodeHelpers = cozyLight.nodeHelpers;
 
+var pkg = require(__dirname+'/package.json');
 
 var controllers = {
 
@@ -143,7 +144,7 @@ var startSocket = function(port) {
 };
 var start = function(options, done) {
   var app = express();
-  options.name = 'Dashboard';
+  options.name = pkg.name;
   options.host = process.env.HOST || "0.0.0.0";
   options.port = options.getPort();
   var socket_port = options.getPort();
@@ -186,7 +187,8 @@ if( !module.parent ){
   var apps = {
     "cozy-labs/hello":{
       "name":"cozy-labs/hello",
-      "displayName":"Hello","version":"1.0.0",
+      "displayName":"Hello",
+      "version":"1.0.0",
       "url":"http://localhost:19104/apps/hello/"
     }
   };
