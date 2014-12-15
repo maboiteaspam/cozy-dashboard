@@ -5,8 +5,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var supertest = require('supertest');
 
-var index = require('./index.js');
-var controllers = index.controllers;
+var application = require('./application.js');
+var controllers = application.controllers;
 
 var cozyLight = require('cozy-light');
 var configHelpers = cozyLight.configHelpers;
@@ -43,18 +43,9 @@ describe('Controllers', function () {
   it.skip('index', function(){
   });
 
-  it.skip('proxyPrivate', function(){
-  });
-
-  it.skip('proxyPublic', function(){
-  });
-
-  it.skip('automaticRedirect', function(){
-  });
-
   describe('install', function () {
     it('should install app', function (done) {
-      this.timeout(10000);
+      this.timeout(20000);
       supertest( app )
         .post('/install-app')
         .send({app: 'cozy-labs/hello'})
@@ -75,7 +66,7 @@ describe('Controllers', function () {
       this.timeout(10000);
       var expect = {
         'cozy-labs/hello': {
-          'name': 'cozy-labs/hello',
+          'name': 'hello',
           'displayName': 'Hello',
           'version': '1.0.0',
           'url': 'http://localhost:19104/apps/hello/'
@@ -90,7 +81,7 @@ describe('Controllers', function () {
       this.timeout(10000);
       var expect = {
         'fixtures/test-plugin/': {
-          'name': 'fixtures/test-plugin/',
+          'name': 'test-plugin',
           'displayName': 'Test',
           'version': '1.1.13',
           'template': ''
