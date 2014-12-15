@@ -9,6 +9,10 @@
       "url": "https://github.com/maboiteaspam/cozy-dashboard/blob/master/LICENSE"
     }
   ],
+  "bin": {
+    "cozy-dashboard": "bin.js"
+  },
+  "main": "application.js",
   "keywords": [
     "personal",
     "cloud",
@@ -49,7 +53,7 @@
   },
   "scripts": {
     "test": "mocha --globals s --reporter spec tests.js",
-    "lint": "eslint index.js tests.js"
+    "lint": "eslint application.js bin.js cozy.js tests.js readline_to_quit.js"
   },
   "repository": {
     "type": "git",

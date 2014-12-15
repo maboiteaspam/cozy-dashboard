@@ -1,12 +1,8 @@
 'use strict';
 
-var fs = require('fs-extra');
 var cozyLight = require('cozy-light');
-var express = require('express');
-var http = require('http');
 var ws = require('ws');
 var WebSocketServer = ws.Server;
-var server;
 
 var configHelpers = cozyLight.configHelpers;
 var npmHelpers = cozyLight.npmHelpers;
@@ -101,7 +97,7 @@ var controllers = {
 };
 
 
-module.exports.connect = function(app,options){
+module.exports.connect = function(app, options){
   app.get('/rest-api', function(req, res){
     res.send('http://localhost:' + options.port);
   });
