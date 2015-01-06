@@ -3,14 +3,16 @@
 var program = require('commander');
 var fs = require('fs-extra');
 var pathExtra = require('path-extra');
-var cozyLight = require('cozy-light');
 var express = require('express');
 var http = require('http');
 var symbolsjs = require('symbolsjs');
 var readlineToQuit = require('./readline_to_quit.js');
 var application = require('./application.js');
 
-var configHelpers = cozyLight.configHelpers;
+var ws = require('ws');
+var WebSocketServer = ws.Server;
+
+var cozyLight = require('cozy-light');
 var nodeHelpers = cozyLight.nodeHelpers;
 
 var pkg = require( pathExtra.join(__dirname, '/package.json'));
@@ -37,7 +39,6 @@ program
     if ( ! fs.existsSync(home)) {
       fs.mkdirSync(home);
     }
-    configHelpers.init(home);
 
 // emulate options
     var opts = {
@@ -49,14 +50,16 @@ program
 
     var app = express();
 
-    application.connect(app,opts);
+    var wss = new WebSocketServer({
+      host: opts.host,
+      port: opts.socketPort
+    });
+
+    application.connect(app, wss, opts);
     app.use(express.static( pathExtra.join(__dirname, '/public') ) );
 
     var server = http.createServer(app);
     server.listen(opts.port);
-    nodeHelpers.clearCloseServer(server);
-
-    var wss = application.openWebsocket(opts);
 
     console.log('');
     console.log('\t   http://localhost:' + port + '/');
@@ -64,7 +67,8 @@ program
     console.log('\t' + symbolsjs.ok + '  ' + pkg.displayName + ' started ');
     console.log('');
 
-    cozyLight.nodeHelpers.clearCloseServer(server);
+    nodeHelpers.clearCloseServer(server);
+    nodeHelpers.clearCloseServer(wss);
 
     readlineToQuit('\t   Press enter to leave...\n', function(){
       wss.close();

@@ -5,19 +5,22 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var supertest = require('supertest');
 
-var application = require('./application.js');
-var controllers = application.controllers;
+var application = require('../application.js');
+
+var pkg = require( pathExtra.join(__dirname, '..', '/package.json'));
+
+var ws = require('ws');
+var WebSocketServer = ws.Server;
 
 var cozyLight = require('cozy-light');
-var configHelpers = cozyLight.configHelpers;
 
-var workingDir = pathExtra.join( __dirname, '/.test-working_dir/');
+var workingDir = pathExtra.join( __dirname, '..', '/.test-working_dir/');
 
 
 before(function(){
   fs.removeSync(workingDir);
   fs.mkdirSync(workingDir);
-  configHelpers.init(workingDir);
+  cozyLight.init({home: workingDir});
 });
 
 
@@ -33,12 +36,17 @@ describe('Controllers', function () {
   var urlencodedParser = bodyParser.urlencoded({ extended: false });
   app.use(urlencodedParser);
   app.use(jsonParser);
-  app.use('/list-apps', controllers.listApps);
-  app.use('/install-app', controllers.installApp);
-  app.use('/uninstall-app', controllers.uninstallApp);
-  app.use('/list-plugins', controllers.listPlugins);
-  app.use('/install-plugin', controllers.installPlugin);
-  app.use('/uninstall-plugin', controllers.uninstallPlugin);
+  var opts = {
+    name: pkg.displayName,
+    host: 'localhost',
+    port: 8080,
+    socketPort: (8080 + 1)
+  };
+  var wss = new WebSocketServer({
+    host: opts.host,
+    port: opts.socketPort
+  });
+  application.connect(app, wss, opts, cozyLight);
 
   it.skip('index', function(){
   });
