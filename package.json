@@ -45,6 +45,7 @@
     "ws": "^0.4.32"
   },
   "devDependencies": {
+    "cozy-light": "0.x",
     "body-parser": "^1.9.2",
     "karma": "^0.12.24",
     "supertest": "^0.15.0",
