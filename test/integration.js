@@ -18,9 +18,11 @@ describe('cozy dashboard', function () {
 
   before(function(done){
     this.timeout(900000);
+      console.error(['cozy-light', '--home', workingDir, 'install', packageDir].join(' '))
     spawn('cozy-light', ['--home', workingDir, 'install', packageDir], { stdio: 'inherit' })
       .on('close', function (code) {
 //        if ( code !== 0 ) return done(code);
+            console.error(['cozy-light', '--home', workingDir, 'start'].join(' '))
         spawn('cozy-light', ['--home', workingDir, 'start'], { stdio: 'inherit' });
         setTimeout(done, 500);
       });
