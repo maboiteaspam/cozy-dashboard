@@ -38,7 +38,7 @@ describe('cozy dashboard', function () {
         browser.assert.url('http://localhost:19104/apps/cozy-dashboard/');
         setTimeout(function(){
           try {
-            var s = browser.assert.link('app-line a',
+            var s = browser.assert.link('.app-line a',
               'Dashboard',
               'http://localhost:19104/apps/cozy-dashboard/');
             console.error(s); // null
